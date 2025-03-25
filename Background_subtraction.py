@@ -3,19 +3,17 @@ import numpy as np
 import imutils
 
 cap = cv2.VideoCapture(0)
-fgbg = cv2.createBackgroundSubtractorMOG2(750,16,True)
+fgbg = cv2.createBackgroundSubtractorMOG2(800,16,True)
 
 ret, ref = cap.read()
 if ret:
 	ref = imutils.resize(ref,width=min(400,ref.shape[1]))
-	#ref = cv2.cvtColor(ref,cv2.COLOR_BGR2GRAY)
 
 while cap.isOpened():
 	# Reading the video stream
 	ret, image = cap.read()
 	if ret:
 		image = imutils.resize(image, width=min(750, image.shape[1]))
-		#image = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
 
 		fgmask = fgbg.apply(image,learningRate=0.0003)
  
@@ -23,7 +21,6 @@ while cap.isOpened():
 		
 		hsv = cv2.cvtColor(fgmask, cv2.COLOR_GRAY2BGR)
 		hsv = cv2.cvtColor(hsv, cv2.COLOR_BGR2HSV)
-
 		
 		lower = np.array([0,0,0])
 		upper = np.array([10,10,10])
@@ -32,7 +29,6 @@ while cap.isOpened():
 		mask = cv2.bitwise_not(mask)
 
 		_, src_thresh = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-		#cv2.imshow('src_thresh', src_thresh);cv2.waitKey(0);cv2.destroyAllWindows()  # Show src_thresh for testing
 		contours, _ = cv2.findContours(src_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 		# Get the moments
